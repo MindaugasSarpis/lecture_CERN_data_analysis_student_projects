@@ -9,8 +9,8 @@ import sys
 sys.path.append(r"C:\Users\Marijus\miniconda3\envs\Spectra\Lib\site-packages")
 
 # Folder path
-folder = r"C:\Users\Marijus\OneDrive - Vilnius University\3 semestras\cern\cern_data_analysis_project\20250722_05nJ_06-10um_Spectras"
-output_folder = r"C:\Users\Marijus\OneDrive - Vilnius University\3 semestras\cern\cern_data_analysis_project\results"
+folder = r"C:\Users\Marijus\OneDrive - Vilnius University\3 semestras\cern\Marijus\Marijus_Mozdeikis\20250722_05nJ_06-10um_Spectras"
+output_folder = r"C:\Users\Marijus\OneDrive - Vilnius University\3 semestras\cern\Marijus\Marijus_Mozdeikis\results"
 files = glob.glob(os.path.join(folder, "*.xlsx"))
 
 # Function to extract angle from column name

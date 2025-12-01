@@ -4,7 +4,7 @@ from export_results import export_peak_results
 from peak_tools import analyze_signal
 
 # ---------------- CONFIGURATION ----------------
-folder = r"C:\Users\Marijus\OneDrive - Vilnius University\3 semestras\cern\cern_data_analysis_project\20250722_05nJ_06-10um_Spectras"
+folder = r"C:\Users\Marijus\OneDrive - Vilnius University\3 semestras\cern\Marijus\Marijus_Mozdeikis\20250722_05nJ_06-10um_Spectras"
 filename = "20250722_05nJ_08um.xlsx"
 column_suffixes = [" P ", " S "]
 initial_prominence = 4
