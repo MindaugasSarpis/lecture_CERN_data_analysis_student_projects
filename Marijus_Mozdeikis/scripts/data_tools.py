@@ -5,21 +5,22 @@ import numpy as np
 def load_signal(folder, filename, column_suffix, multiple=False):
     """Load wavelength array and inverted signal from an Excel file."""
 
-    # --- Locate file ---
+    # Locate file
     file_path = os.path.join(folder, filename)
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"File not found: {file_path}")
 
-    # --- Load Excel sheet ---
+    # Load Excel sheet
     df = pd.read_excel(file_path, sheet_name="Calibration 1-Measurements")
 
-    # --- Find the first column that ends with the given suffix ---
+    # Identify relevant columns
+    wavelengths = pd.to_numeric(df[df.columns[0]], errors="coerce").values
+
     p_cols = [col for col in df.columns if col.endswith(column_suffix)]
     if not p_cols:
         raise ValueError(f"No columns ending with '{column_suffix}' found")
 
-    wavelengths = pd.to_numeric(df[df.columns[0]], errors="coerce").values
-
+    # Process and invert signals
     signals = {}
     for col in p_cols:
         raw = pd.to_numeric(df[col], errors="coerce").values
