@@ -1,0 +1,182 @@
+[
+  {
+    "id": "tough_shot",
+    "title": "Take a Tough Shot",
+    "description": "You pull up for a heavily contested jumper with the game on the line.",
+    "tags": ["offense"],
+    "base_success": 0.1,
+    "stat_weights": {
+      "scoring": 0.5,
+      "playmaking": 0.1,
+      "discipline": 0.1,
+      "luck_factor": 0.3
+    },
+    "on_success": { "points": 6, "reputation": 4, "health": 0, "titles": 0, "money": 2 },
+    "on_fail":    { "points": 0, "reputation": -3, "health": -1, "titles": 0, "money": -1 }
+  },
+  {
+    "id": "safe_pass",
+    "title": "Make the Safe Pass",
+    "description": "You swing the ball to the open teammate instead of forcing a shot.",
+    "tags": ["offense", "playmaking"],
+    "base_success": 0.6,
+    "stat_weights": {
+      "scoring": 0.1,
+      "playmaking": 0.5,
+      "discipline": 0.3,
+      "luck_factor": 0.1
+    },
+    "on_success": { "points": 2, "reputation": 2, "health": 0, "titles": 0, "money": 1 },
+    "on_fail":    { "points": 0, "reputation": -1, "health": 0, "titles": 0, "money": 0 }
+  },
+  {
+    "id": "skip_practice",
+    "title": "Skip Practice",
+    "description": "You decide to skip a team practice to rest or have fun.",
+    "tags": ["discipline"],
+    "base_success": 0.2,
+    "stat_weights": {
+      "scoring": 0.0,
+      "playmaking": 0.0,
+      "discipline": -0.6,
+      "luck_factor": 0.4
+    },
+    "on_success": { "points": 1, "reputation": -1, "health": 5, "titles": 0, "money": 0 },
+    "on_fail":    { "points": 0, "reputation": -5, "health": 0, "titles": 0, "money": -1 }
+  },
+  {
+    "id": "extra_reps",
+    "title": "Film Session + Extra Reps",
+    "description": "You stay late with an assistant coach to watch film and get shots up.",
+    "tags": ["work_ethic"],
+    "base_success": 0.7,
+    "stat_weights": {
+      "scoring": 0.3,
+      "playmaking": 0.2,
+      "discipline": 0.4,
+      "luck_factor": 0.1
+    },
+    "on_success": { "points": 3, "reputation": 4, "health": -2, "titles": 0, "money": 1 },
+    "on_fail":    { "points": 0, "reputation": 0, "health": -4, "titles": 0, "money": 0 }
+  },
+  {
+    "id": "challenge_coach",
+    "title": "Challenge the Coach",
+    "description": "You ask the coach directly for a bigger role in the offense.",
+    "tags": ["chemistry"],
+    "base_success": 0.3,
+    "stat_weights": {
+      "scoring": 0.3,
+      "playmaking": 0.3,
+      "discipline": -0.2,
+      "luck_factor": 0.6
+    },
+    "on_success": { "points": 4, "reputation": 3, "health": 0, "titles": 0, "money": 2 },
+    "on_fail":    { "points": 0, "reputation": -4, "health": 0, "titles": 0, "money": -2 }
+  },
+  {
+    "id": "take_charge",
+    "title": "Take a Charge",
+    "description": "You step in front of a driving player to take a charge.",
+    "tags": ["defense", "health"],
+    "base_success": 0.4,
+    "stat_weights": {
+      "scoring": 0.1,
+      "playmaking": 0.1,
+      "discipline": 0.4,
+      "luck_factor": 0.4
+    },
+    "on_success": { "points": 2, "reputation": 3, "health": -2, "titles": 0, "money": 1 },
+    "on_fail":    { "points": 0, "reputation": -1, "health": -6, "titles": 0, "money": 0 }
+  },
+  {
+    "id": "rest_injury",
+    "title": "Rest a Minor Injury",
+    "description": "You choose to sit out a game to protect a nagging injury.",
+    "tags": ["health"],
+    "base_success": 0.7,
+    "stat_weights": {
+      "scoring": -0.1,
+      "playmaking": 0.0,
+      "discipline": 0.5,
+      "luck_factor": 0.3
+    },
+    "on_success": { "points": 0, "reputation": -1, "health": 8, "titles": 0, "money": 0 },
+    "on_fail":    { "points": 0, "reputation": -3, "health": 2, "titles": 0, "money": 0 }
+  },
+  {
+    "id": "play_through_pain",
+    "title": "Play Through Pain",
+    "description": "You decide to play even though your body is clearly not 100%.",
+    "tags": ["health", "clutch"],
+    "base_success": 0.35,
+    "stat_weights": {
+      "scoring": 0.3,
+      "playmaking": 0.2,
+      "discipline": -0.2,
+      "luck_factor": 0.7
+    },
+    "on_success": { "points": 6, "reputation": 5, "health": -8, "titles": 0, "money": 3 },
+    "on_fail":    { "points": 0, "reputation": -2, "health": -12, "titles": 0, "money": 0 }
+  },
+  {
+    "id": "social_beef",
+    "title": "Social Media Beef",
+    "description": "You fire off a questionable tweet about a teammate.",
+    "tags": ["discipline"],
+    "base_success": 0.15,
+    "stat_weights": {
+      "scoring": 0.0,
+      "playmaking": 0.0,
+      "discipline": -0.7,
+      "luck_factor": 0.3
+    },
+    "on_success": { "points": 0, "reputation": 1, "health": 0, "titles": 0, "money": 2 },
+    "on_fail":    { "points": 0, "reputation": -6, "health": 0, "titles": 0, "money": -1 }
+  },
+  {
+    "id": "team_dinner",
+    "title": "Team Dinner",
+    "description": "You invite the whole team out for a bonding dinner.",
+    "tags": ["chemistry"],
+    "base_success": 0.6,
+    "stat_weights": {
+      "scoring": 0.1,
+      "playmaking": 0.3,
+      "discipline": 0.2,
+      "luck_factor": 0.4
+    },
+    "on_success": { "points": 1, "reputation": 4, "health": 0, "titles": 0, "money": -3 },
+    "on_fail":    { "points": 0, "reputation": -1, "health": 0, "titles": 0, "money": -2 }
+  },
+  {
+    "id": "endorsement",
+    "title": "Endorsement Deal",
+    "description": "A brand offers you a sponsorship contract.",
+    "tags": ["finance"],
+    "base_success": 0.5,
+    "stat_weights": {
+      "scoring": 0.3,
+      "playmaking": 0.1,
+      "discipline": 0.2,
+      "luck_factor": 0.4
+    },
+    "on_success": { "points": 0, "reputation": 3, "health": 0, "titles": 0, "money": 8 },
+    "on_fail":    { "points": 0, "reputation": -2, "health": 0, "titles": 0, "money": 0 }
+  },
+  {
+    "id": "clutch_free_throws",
+    "title": "Clutch Free Throws",
+    "description": "You step to the line with the game in the balance.",
+    "tags": ["offense", "clutch"],
+    "base_success": 0.3,
+    "stat_weights": {
+      "scoring": 0.4,
+      "playmaking": 0.1,
+      "discipline": 0.1,
+      "luck_factor": 0.4
+    },
+    "on_success": { "points": 4, "reputation": 4, "health": 0, "titles": 0, "money": 2 },
+    "on_fail":    { "points": 0, "reputation": -4, "health": 0, "titles": 0, "money": -1 }
+  }
+]
