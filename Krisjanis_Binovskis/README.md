@@ -22,17 +22,17 @@ You need Python 3.10+ installed.
 
 Install dependencies:
 
-\`\`\`bash
+```bash
 pip install -r requirements.txt
-\`\`\`
+```
 
 ## Fetch NBA data
 
 Before running the game, fetch and process real player stats:
 
-\`\`\`bash
+```bash
 python -m analysis.fetch_and_process_players
-\`\`\`
+```
 
 This will create:
 
@@ -41,18 +41,18 @@ This will create:
 
 ## Run the game
 
-\`\`\`bash
+```bash
 python -m game.main
-\`\`\`
+```
 
 ## Adding your own art
 
 In `game/main.py`, replace the player circle with your own sprite:
 
-\`\`\`python
+```python
 player_sprite = pygame.image.load("my_player.png").convert_alpha()
 w, h = player_sprite.get_size()
 screen.blit(player_sprite, (int(player_x) - w // 2, int(player_y) - h // 2))
-\`\`\`
+```
 
 Place your .png image inside the `game/` folder.
