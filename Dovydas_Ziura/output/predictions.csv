@@ -1,0 +1,9 @@
+filename,prediction,ground_truth
+..\dataset\hand_data\prediction_test_1.jpg,\sqrt{\theta}=\frac{d\theta}{d\theta},
+..\dataset\hand_data\prediction_test_2.jpg,(\begin{matrix}5\ 2\end{matrix}),
+..\dataset\hand_data\prediction_test_3.jpg,"G(\theta,\theta,\theta)",
+..\dataset\hand_data\prediction_test_4.jpg,[\begin{matrix}A&B\ C&D\end{matrix}],
+..\dataset\hand_data\prediction_test_5.jpg,(\begin{matrix}2\ 6\end{matrix}),
+..\dataset\hand_data\prediction_test_6.jpg,X^{\prime\prime}=1,
+..\dataset\hand_data\prediction_test_7.jpg,\tilde{\nu},
+..\dataset\hand_data\prediction_test_8.jpg,"A_{1}=\{0,3\}\notin\{1,2,3\}",
