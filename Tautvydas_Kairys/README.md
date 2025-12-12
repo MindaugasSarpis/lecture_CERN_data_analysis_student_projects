@@ -19,7 +19,7 @@ Given a movie title, the system identifies the most similar movies by comparing 
 - Returns a ranked list of similar films  
 - Includes genres and similarity scores for each recommendation  
 
-### User-Based Recommendations
+### User-Based Recommendations (unused)
 For a provided user ID, the system predicts which unrated movies the user is likely to enjoy.
 - Finds the most similar users  
 - Computes weighted average predicted ratings  
@@ -47,7 +47,8 @@ Users can request a random movie from the dataset and optionally receive recomme
 
 ## Running the Program
 
-Run the following command:
+Run the following command (or just press run):
 
 ```bash
 python project.py
+
