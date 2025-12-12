@@ -1,53 +1,50 @@
 # Movie Recommendation System
 
-This project implements a movie recommendation system using collaborative filtering techniques and the MovieLens dataset. The system analyzes user ratings to identify similarities between movies and between users, ultimately providing personalized movie suggestions.
+A collaborative filtering-based movie recommender built with Python and the MovieLens dataset. This program analyzes user rating patterns to find similar movies and suggest what you might enjoy next.
 
-## Overview
+## What It Does
 
-The program loads two datasets:
+The system works with two CSV files:
+- `movies.csv` - movie titles and their genres  
+- `ratings.csv` - user ratings data  
 
-- **movies.csv** – contains movie titles and genres  
-- **ratings.csv** – contains user ratings for each movie  
+From these files, I build a user-movie matrix and calculate cosine similarity scores. Movies with similar rating patterns get higher similarity scores, which drives the recommendations.
 
-Using these files, the script constructs a user–movie ratings matrix and applies cosine similarity to measure how closely movies or users resemble one another. These similarity scores form the basis of the recommendation engine.
+## Main Features
 
-## Features
+**1. Movie-Based Recommendations**
 
-### Movie-Based Recommendations
-Given a movie title, the system identifies the most similar movies by comparing rating patterns across all users.
-- Supports partial title matching  
-- Returns a ranked list of similar films  
-- Includes genres and similarity scores for each recommendation  
+Type in a movie you like, and the system finds similar ones based on how users rated them. You don't need the exact title - partial matches work fine. Each recommendation comes with its genres and a similarity score.
 
-### User-Based Recommendations (unused)
-For a provided user ID, the system predicts which unrated movies the user is likely to enjoy.
-- Finds the most similar users  
-- Computes weighted average predicted ratings  
-- Returns the highest-rated recommendations for that user  
+**2. Random Movie Pick**
 
-### Random Movie Selection
-Users can request a random movie from the dataset and optionally receive recommendations based on that selection.
+Not sure what to watch? Get a random movie from the dataset. You can then see similar movies if you're interested.
 
-## Technologies Used
-- Python 3  
-- Pandas  
-- NumPy  
-- scikit-learn (for cosine similarity)  
+**3. User-Based Recommendations**
+
+This feature finds similar users and predicts what movies you'd rate highly based on their preferences. Note: This requires a user ID, so it's mainly included for demonstration purposes rather than practical use.
+
+## Tech Stack
+
+- Python 3
+- Pandas (data handling)
+- NumPy (numerical operations)
+- scikit-learn (cosine similarity calculations)
 - MovieLens dataset
 
-## How It Works
+## How the Algorithm Works
 
-1. The script loads and processes the movie and rating datasets.  
-2. It builds a user–movie matrix and fills missing values with zeros when calculating similarities.  
-3. It computes:  
-   - movie-to-movie similarity  
-   - user-to-user similarity  
-4. Based on the selected option, it returns either movie-based or user-based recommendations.  
-5. An interactive menu allows the user to enter a movie title, request a random movie, or exit the program.
+The program first creates a matrix where rows are users and columns are movies, with ratings as values. Empty cells (movies a user hasn't rated) get filled with zeros for the similarity calculations.
 
-## Running the Program
+Then it computes cosine similarity between movies. Movies with similar rating patterns across users end up with high similarity scores. When you ask for recommendations, it just looks up the most similar movies and returns them ranked by score.
 
-Run the following command (or just press run):
+For user-based recommendations, the same process happens but comparing users instead of movies. It finds users with similar rating patterns and predicts what you'd rate based on what they liked.
 
+## Running It
+
+Just run:
 ```bash
 python project.py
+```
+
+The program will load the data, show some examples, then give you an interactive menu where you can search for movies or get random suggestions.
