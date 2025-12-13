@@ -1,0 +1,36 @@
+{
+  "input_csv": "Testing_csv/Zconfig_test.csv",
+  "actions": [
+    "Extract numeric value + units",
+    "Convert units to SI",
+    "Plot data",
+    "Generate LaTeX table"
+  ],
+  "output_csv": "Cleaned_csv/tested_config.csv",
+  "log_enabled": true,
+  "plot": {
+    "x_col": "Time_value",
+    "y_cols": ["Output_Voltage_value", "Input_Voltage_value"],
+    "plot_type": "scatter",
+    "x_scale": "linear",
+    "y_scale": "linear",
+    "grid": true,
+    "legend": true,
+    "x_label": "Time (s)",
+    "y_label": "Voltage (V)",
+    "title": "Voltage vs Time",
+    "output_png": "Plots/config_test.png"
+  },
+  "latex": {
+    "columns": [
+      "Time_value",
+      "Input_Voltage_value",
+      "Output_Voltage_value"
+    ],
+    "use_all_rows": true,
+    "caption": "Voltage measurements over time.",
+    "label": "table:cleaned_si",
+    "align": "c",
+    "output_tex": "Latex/config_test.tex"
+  }
+}
