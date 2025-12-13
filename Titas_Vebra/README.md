@@ -30,7 +30,4 @@ A command-line application for cleaning, transforming, plotting and exporting da
 - pandas
 - numpy
 - matplotlib
-- csv_actions.py and main.py should be in the same folder
-
-## Works by running main.py
-
+- Script is inside a folder
