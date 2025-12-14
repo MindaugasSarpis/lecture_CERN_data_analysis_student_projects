@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Installing dependencies...
+      - npm ci
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building application...
+      - npm run build
+      - echo Build completed on `date`
+  post_build:
+    commands:
+      - echo Build phase completed
+artifacts:
+  files:
+    - '**/*'
+  name: aionly-backend-$(date +%Y-%m-%d)
+

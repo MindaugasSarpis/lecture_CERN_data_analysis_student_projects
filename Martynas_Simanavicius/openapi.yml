@@ -1,0 +1,2136 @@
+openapi: 3.0.0
+info:
+  title: Hack4Vilnius 2025 Backend API
+  description: Backend server API with Express, TypeScript, and TypeORM using modularized monolith architecture
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LearningTreeNode:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          maxLength: 120
+          example: TypeScript Basics
+        description:
+          type: string
+          nullable: true
+          example: Introduction to TypeScript fundamentals
+        video_file_name:
+          type: string
+          nullable: true
+          example: "1734567890123-video.mp4"
+        learning_tree_id:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+    UserVideo:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        user_id:
+          type: integer
+          example: 1
+        learning_tree_node_id:
+          type: integer
+          example: 1
+        video_file_name:
+          type: string
+          example: "1734567890123-video.mp4"
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+    ProcessedUserVideo:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        user_video_id:
+          type: integer
+          example: 1
+        video_file_name:
+          type: string
+          example: "1734567890123-processed-video.mp4"
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+    UserStatistics:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        user_id:
+          type: integer
+          example: 1
+        average_score:
+          type: number
+          format: float
+          example: 85.5
+        lessons_per_day:
+          type: number
+          format: float
+          example: 2.5
+        largest_streak:
+          type: integer
+          example: 7
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+    UserLearningTreeNodeStats:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        learning_tree_node_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        user_video_id:
+          type: integer
+          example: 1
+        completion_score:
+          type: number
+          format: float
+          example: 92.5
+        analysis_description:
+          type: string
+          example: "Good pronunciation and clear articulation. Minor improvements needed in pacing."
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2025-10-18T10:30:00.000Z
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Check if the server is running
+      tags:
+        - System
+      responses:
+        '200':
+          description: Server is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  message:
+                    type: string
+                    example: Server is running
+
+  /api/auth/register:
+    post:
+      summary: Register new user
+      description: Create a new user account
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - username
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+                username:
+                  type: string
+                  example: johndoe
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+                  email:
+                    type: string
+                    example: user@example.com
+                  username:
+                    type: string
+                    example: johndoe
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: 2025-10-18T10:30:00.000Z
+        '400':
+          description: Bad request - Missing required fields or user already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Missing required fields
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/auth/login:
+    post:
+      summary: Login user
+      description: Authenticate user and receive JWT access token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  example: password123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Missing required fields
+        '401':
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid email or password
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/learning-trees:
+    post:
+      summary: Create learning tree
+      description: Create a new learning tree
+      tags:
+        - Learning Trees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  maxLength: 120
+                  example: Introduction to TypeScript
+                description:
+                  type: string
+                  nullable: true
+                  example: A comprehensive guide to TypeScript fundamentals
+      responses:
+        '201':
+          description: Learning tree created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+                  name:
+                    type: string
+                    example: Introduction to TypeScript
+                  description:
+                    type: string
+                    nullable: true
+                    example: A comprehensive guide to TypeScript fundamentals
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: 2025-10-18T10:30:00.000Z
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2025-10-18T10:30:00.000Z
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required field: name"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    get:
+      summary: List all learning trees
+      description: Retrieve all learning trees
+      tags:
+        - Learning Trees
+      responses:
+        '200':
+          description: List of learning trees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    uuid:
+                      type: string
+                      format: uuid
+                      example: 550e8400-e29b-41d4-a716-446655440000
+                    name:
+                      type: string
+                      example: Introduction to TypeScript
+                    description:
+                      type: string
+                      nullable: true
+                      example: A comprehensive guide to TypeScript fundamentals
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: 2025-10-18T10:30:00.000Z
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      example: 2025-10-18T10:30:00.000Z
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/learning-trees/{uuid}:
+    get:
+      summary: Get learning tree by UUID
+      description: Retrieve a specific learning tree by its UUID
+      tags:
+        - Learning Trees
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the learning tree
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Learning tree retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+                  name:
+                    type: string
+                    example: Introduction to TypeScript
+                  description:
+                    type: string
+                    nullable: true
+                    example: A comprehensive guide to TypeScript fundamentals
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: 2025-10-18T10:30:00.000Z
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2025-10-18T10:30:00.000Z
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Learning tree not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Learning tree not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    put:
+      summary: Update learning tree
+      description: Update an existing learning tree by UUID
+      tags:
+        - Learning Trees
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the learning tree
+          example: 550e8400-e29b-41d4-a716-446655440000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 120
+                  example: Advanced TypeScript
+                description:
+                  type: string
+                  nullable: true
+                  example: Advanced TypeScript patterns and techniques
+      responses:
+        '200':
+          description: Learning tree updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uuid:
+                    type: string
+                    format: uuid
+                    example: 550e8400-e29b-41d4-a716-446655440000
+                  name:
+                    type: string
+                    example: Advanced TypeScript
+                  description:
+                    type: string
+                    nullable: true
+                    example: Advanced TypeScript patterns and techniques
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: 2025-10-18T10:30:00.000Z
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2025-10-18T11:00:00.000Z
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Learning tree not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Learning tree not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    delete:
+      summary: Delete learning tree
+      description: Delete a learning tree by UUID
+      tags:
+        - Learning Trees
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the learning tree
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Learning tree deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Learning tree deleted successfully
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Learning tree not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Learning tree not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/learning-tree-nodes:
+    post:
+      summary: Create learning tree node
+      description: Create a new learning tree node
+      tags:
+        - Learning Tree Nodes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - learning_tree_id
+              properties:
+                name:
+                  type: string
+                  maxLength: 120
+                  example: TypeScript Basics
+                description:
+                  type: string
+                  nullable: true
+                  example: Introduction to TypeScript fundamentals
+                video_file_name:
+                  type: string
+                  nullable: true
+                  example: "1734567890123-video.mp4"
+                learning_tree_id:
+                  type: integer
+                  example: 1
+      responses:
+        '201':
+          description: Learning tree node created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningTreeNode'
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required field: name"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    get:
+      summary: List all learning tree nodes
+      description: Retrieve all learning tree nodes, optionally filtered by learning_tree_id
+      tags:
+        - Learning Tree Nodes
+      parameters:
+        - name: learning_tree_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter nodes by learning tree ID
+          example: 1
+      responses:
+        '200':
+          description: List of learning tree nodes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LearningTreeNode'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/learning-tree-nodes/{uuid}:
+    get:
+      summary: Get learning tree node by UUID
+      description: Retrieve a specific learning tree node by its UUID
+      tags:
+        - Learning Tree Nodes
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the learning tree node
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Learning tree node retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningTreeNode'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Learning tree node not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Learning tree node not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    put:
+      summary: Update learning tree node
+      description: Update an existing learning tree node by UUID
+      tags:
+        - Learning Tree Nodes
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the learning tree node
+          example: 550e8400-e29b-41d4-a716-446655440000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 120
+                  example: Advanced TypeScript
+                description:
+                  type: string
+                  nullable: true
+                  example: Advanced TypeScript patterns and techniques
+                video_file_name:
+                  type: string
+                  nullable: true
+                  example: "1734567890123-video.mp4"
+      responses:
+        '200':
+          description: Learning tree node updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LearningTreeNode'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Learning tree node not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Learning tree node not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    delete:
+      summary: Delete learning tree node
+      description: Delete a learning tree node by UUID
+      tags:
+        - Learning Tree Nodes
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the learning tree node
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Learning tree node deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Learning tree node deleted successfully
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Learning tree node not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Learning tree node not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/videos/upload:
+    post:
+      summary: Upload video file
+      description: Upload an MP4 video file to Google Cloud Storage
+      tags:
+        - Videos
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - video
+              properties:
+                video:
+                  type: string
+                  format: binary
+                  description: MP4 video file to upload (max 500MB)
+                userId:
+                  type: string
+                  description: Optional user ID (currently using mock value)
+                  example: "1"
+      responses:
+        '201':
+          description: Video uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      videoUrl:
+                        type: string
+                        example: "https://storage.googleapis.com/your-bucket/videos/1734567890123-video.mp4"
+                      fileName:
+                        type: string
+                        example: "1734567890123-video.mp4"
+                      message:
+                        type: string
+                        example: "Video uploaded successfully"
+        '400':
+          description: Bad request - invalid file or missing file
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No video file provided. Please upload an MP4 file."
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to upload video"
+
+  /api/videos/{fileName}/stream:
+    get:
+      summary: Get video streaming URL
+      description: Generate a signed URL for streaming a video file
+      tags:
+        - Videos
+      parameters:
+        - name: fileName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the video file (must end with .mp4)
+          example: "1734567890123-video.mp4"
+        - name: expirationHours
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 24
+            minimum: 1
+            maximum: 168
+          description: Number of hours until the streaming URL expires (default 24, max 168)
+          example: 24
+      responses:
+        '200':
+          description: Streaming URL generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      streamingUrl:
+                        type: string
+                        example: "https://storage.googleapis.com/your-bucket/videos/1734567890123-video.mp4?signed_url=..."
+                      expiresAt:
+                        type: string
+                        format: date-time
+                        example: "2025-11-17T10:30:00.000Z"
+                      fileName:
+                        type: string
+                        example: "1734567890123-video.mp4"
+        '400':
+          description: Bad request - invalid file name or parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "fileName parameter is required"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Failed to generate streaming URL"
+
+  /api/user-videos:
+    get:
+      summary: List all user videos
+      description: Retrieve all user videos, optionally filtered by user_id or learning_tree_node_id
+      tags:
+        - User Videos
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter videos by user ID
+          example: 1
+        - name: learning_tree_node_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter videos by learning tree node ID
+          example: 1
+      responses:
+        '200':
+          description: List of user videos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserVideo'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/user-videos/{uuid}:
+    get:
+      summary: Get user video by UUID
+      description: Retrieve a specific user video by its UUID
+      tags:
+        - User Videos
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user video
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: User video retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserVideo'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User video not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    put:
+      summary: Update user video
+      description: Update an existing user video by UUID
+      tags:
+        - User Videos
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user video
+          example: 550e8400-e29b-41d4-a716-446655440000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                video_file_name:
+                  type: string
+                  example: "1734567890123-video.mp4"
+                learning_tree_node_id:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: User video updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserVideo'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User video not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    delete:
+      summary: Delete user video
+      description: Delete a user video by UUID
+      tags:
+        - User Videos
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user video
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: User video deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User video deleted successfully
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User video not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/processed-user-videos:
+    post:
+      summary: Create processed user video
+      description: Create a new processed user video record
+      tags:
+        - Processed User Videos
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_video_id
+                - video_file_name
+              properties:
+                user_video_id:
+                  type: integer
+                  example: 1
+                video_file_name:
+                  type: string
+                  example: "1734567890123-processed-video.mp4"
+      responses:
+        '201':
+          description: Processed user video created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessedUserVideo'
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required field: user_video_id"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    get:
+      summary: List all processed user videos
+      description: Retrieve all processed user videos, optionally filtered by user_video_id
+      tags:
+        - Processed User Videos
+      parameters:
+        - name: user_video_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter processed videos by user video ID
+          example: 1
+      responses:
+        '200':
+          description: List of processed user videos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProcessedUserVideo'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/processed-user-videos/{uuid}:
+    get:
+      summary: Get processed user video by UUID
+      description: Retrieve a specific processed user video by its UUID
+      tags:
+        - Processed User Videos
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the processed user video
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Processed user video retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessedUserVideo'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Processed user video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Processed user video not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    put:
+      summary: Update processed user video
+      description: Update an existing processed user video by UUID
+      tags:
+        - Processed User Videos
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the processed user video
+          example: 550e8400-e29b-41d4-a716-446655440000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                video_file_name:
+                  type: string
+                  example: "1734567890123-processed-video.mp4"
+      responses:
+        '200':
+          description: Processed user video updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessedUserVideo'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Processed user video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Processed user video not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    delete:
+      summary: Delete processed user video
+      description: Delete a processed user video by UUID
+      tags:
+        - Processed User Videos
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the processed user video
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Processed user video deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Processed user video deleted successfully
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: Processed user video not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Processed user video not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/user-statistics:
+    post:
+      summary: Create user statistics
+      description: Create a new user statistics record
+      tags:
+        - User Statistics
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - average_score
+                - lessons_per_day
+                - largest_streak
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                average_score:
+                  type: number
+                  format: float
+                  example: 85.5
+                lessons_per_day:
+                  type: number
+                  format: float
+                  example: 2.5
+                largest_streak:
+                  type: integer
+                  example: 7
+      responses:
+        '201':
+          description: User statistics created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatistics'
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required field: user_id"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    get:
+      summary: List all user statistics
+      description: Retrieve all user statistics, optionally filtered by user_id
+      tags:
+        - User Statistics
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter statistics by user ID
+          example: 1
+      responses:
+        '200':
+          description: List of user statistics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserStatistics'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/user-statistics/{uuid}:
+    get:
+      summary: Get user statistics by UUID
+      description: Retrieve a specific user statistics record by its UUID
+      tags:
+        - User Statistics
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user statistics
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: User statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatistics'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User statistics not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User statistics not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    put:
+      summary: Update user statistics
+      description: Update an existing user statistics record by UUID
+      tags:
+        - User Statistics
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user statistics
+          example: 550e8400-e29b-41d4-a716-446655440000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                average_score:
+                  type: number
+                  format: float
+                  example: 90.0
+                lessons_per_day:
+                  type: number
+                  format: float
+                  example: 3.0
+                largest_streak:
+                  type: integer
+                  example: 10
+      responses:
+        '200':
+          description: User statistics updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatistics'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User statistics not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User statistics not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    delete:
+      summary: Delete user statistics
+      description: Delete a user statistics record by UUID
+      tags:
+        - User Statistics
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user statistics
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: User statistics deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User statistics deleted successfully
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User statistics not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User statistics not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/user-statistics/user/{userUuid}:
+    get:
+      summary: Get user statistics by user UUID
+      description: Retrieve user statistics by user UUID (alternative endpoint)
+      tags:
+        - User Statistics
+      parameters:
+        - name: userUuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: User statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatistics'
+        '400':
+          description: Bad request - Missing user UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: userUuid"
+        '404':
+          description: User statistics not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User statistics not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/user-learning-tree-node-stats:
+    post:
+      summary: Create user learning tree node stats
+      description: Create a new user learning tree node stats record
+      tags:
+        - User Learning Tree Node Stats
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - learning_tree_node_id
+                - user_id
+                - user_video_id
+                - completion_score
+                - analysis_description
+              properties:
+                learning_tree_node_id:
+                  type: integer
+                  example: 1
+                user_id:
+                  type: integer
+                  example: 1
+                user_video_id:
+                  type: integer
+                  example: 1
+                completion_score:
+                  type: number
+                  format: float
+                  example: 92.5
+                analysis_description:
+                  type: string
+                  example: "Good pronunciation and clear articulation. Minor improvements needed in pacing."
+      responses:
+        '201':
+          description: User learning tree node stats created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLearningTreeNodeStats'
+        '400':
+          description: Bad request - Missing required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required field: learning_tree_node_id"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    get:
+      summary: List all user learning tree node stats
+      description: Retrieve all user learning tree node stats, optionally filtered by user_id, learning_tree_node_id, or user_video_id
+      tags:
+        - User Learning Tree Node Stats
+      parameters:
+        - name: user_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter stats by user ID
+          example: 1
+        - name: learning_tree_node_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter stats by learning tree node ID
+          example: 1
+        - name: user_video_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter stats by user video ID
+          example: 1
+      responses:
+        '200':
+          description: List of user learning tree node stats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserLearningTreeNodeStats'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /api/user-learning-tree-node-stats/{uuid}:
+    get:
+      summary: Get user learning tree node stats by UUID
+      description: Retrieve a specific user learning tree node stats record by its UUID
+      tags:
+        - User Learning Tree Node Stats
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user learning tree node stats
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: User learning tree node stats retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLearningTreeNodeStats'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User learning tree node stats not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User learning tree node stats not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    put:
+      summary: Update user learning tree node stats
+      description: Update an existing user learning tree node stats record by UUID
+      tags:
+        - User Learning Tree Node Stats
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user learning tree node stats
+          example: 550e8400-e29b-41d4-a716-446655440000
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                completion_score:
+                  type: number
+                  format: float
+                  example: 95.0
+                analysis_description:
+                  type: string
+                  example: "Excellent performance with clear pronunciation and good pacing."
+      responses:
+        '200':
+          description: User learning tree node stats updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLearningTreeNodeStats'
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User learning tree node stats not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User learning tree node stats not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+    delete:
+      summary: Delete user learning tree node stats
+      description: Delete a user learning tree node stats record by UUID
+      tags:
+        - User Learning Tree Node Stats
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID of the user learning tree node stats
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: User learning tree node stats deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User learning tree node stats deleted successfully
+        '400':
+          description: Bad request - Missing UUID parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing required parameter: uuid"
+        '404':
+          description: User learning tree node stats not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User learning tree node stats not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Authentication
+    description: User authentication and registration endpoints
+  - name: Learning Trees
+    description: Learning tree management endpoints
+  - name: Learning Tree Nodes
+    description: Learning tree node management endpoints
+  - name: Videos
+    description: Video upload and streaming endpoints
+  - name: User Videos
+    description: User video management endpoints
+  - name: Processed User Videos
+    description: Processed user video management endpoints
+  - name: User Statistics
+    description: User statistics management endpoints
+  - name: User Learning Tree Node Stats
+    description: User learning tree node statistics management endpoints
+
