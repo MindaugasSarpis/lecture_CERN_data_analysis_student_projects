@@ -1,0 +1,39 @@
+
+# ======================
+# Python
+# ======================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+
+# ======================
+# Jupyter
+# ======================
+.ipynb_checkpoints/
+
+# ======================
+# Data / analysis outputs
+# ======================
+*.tmp
+*.bak
+*.cache
+*.npy
+*.npz
+
+# ======================
+# OS / editor junk
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# VS Code
+# ======================
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+
