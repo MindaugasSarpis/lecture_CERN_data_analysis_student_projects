@@ -1,0 +1,13 @@
+# Ignore generated results and caches
+Results/
+cache/
+Data/
+__pycache__/
+*.pyc
+*.pkl
+*.sqlite
+*.db
+*.shp
+*.dbf
+*.prj
+*.shx
