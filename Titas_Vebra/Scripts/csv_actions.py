@@ -227,43 +227,28 @@ def convert_units_to_SI(df: pd.DataFrame) -> pd.DataFrame:
     df_clean = df.copy()
 
     def _norm_unit(u: pd.Series) -> pd.Series:
-        u = u.astype("string")
-        u = u.str.strip()
+        u = u.astype("string").str.strip()
         u = u.str.replace("°", "deg", regex=False)
         u = u.str.replace("µ", "u", regex=False)
         return u.str.lower()
 
-    # conversions where new_value = value * factor and unit becomes target_unit
     FACTOR_MAPS = {
-        # length -> m
         "m": {"mm": 1e-3, "cm": 1e-2, "m": 1.0, "km": 1e3},
-        # mass -> kg
         "kg": {"mg": 1e-6, "g": 1e-3, "kg": 1.0, "t": 1e3},
-        # time -> s
         "s": {"ms": 1e-3, "s": 1.0, "min": 60.0, "h": 3600.0},
-        # pressure -> Pa
         "pa": {"pa": 1.0, "kpa": 1e3, "mpa": 1e6, "bar": 1e5, "mbar": 1e2, "atm": 101325.0, "psi": 6894.757},
-        # force -> N
         "n": {"n": 1.0, "kn": 1e3},
-        # energy -> J
         "j": {"j": 1.0, "kj": 1e3},
-        # voltage -> V
         "v": {"v": 1.0, "mv": 1e-3, "kv": 1e3},
-        # frequency -> Hz
         "hz": {"hz": 1.0, "khz": 1e3, "mhz": 1e6, "ghz": 1e9},
-        # current -> A
         "a": {"a": 1.0, "ma": 1e-3, "ka": 1e3},
-        # resistance -> ohm
-        "ohm": {"ohm": 1.0, "kohm": 1e3, "mohm": 1e6, "ω": 1.0, "kω": 1e3, "mω": 1e6},
-        # capacitance -> F
+        "ohm": {"ohm": 1.0, "kohm": 1e3, "mohm": 1e6, "ω": 1.0, "kω": 1e3, "mω": 1e6, "Ω": 1.0, "kΩ": 1e3, "mΩ": 1e6},
         "f": {"f": 1.0, "mf": 1e-3, "uf": 1e-6, "nf": 1e-9, "pf": 1e-12},
-        # wavelength -> m (includes um / µm)
-        "m_wl": {"m": 1.0, "mm": 1e-3, "um": 1e-6, "µm": 1e-6, "nm": 1e-9},
+        # if you really need wavelength, keep it, but it MUST NOT double-apply
+        "m_wl": {"m": 1.0, "mm": 1e-3, "um": 1e-6, "nm": 1e-9},
     }
 
-    cols = list(df_clean.columns)
-
-    for col in cols:
+    for col in list(df_clean.columns):
         if not str(col).endswith("_value"):
             continue
 
@@ -272,57 +257,58 @@ def convert_units_to_SI(df: pd.DataFrame) -> pd.DataFrame:
         if unit_col not in df_clean.columns:
             continue
 
-        # numeric values
         v = pd.to_numeric(df_clean[col], errors="coerce").astype("float64")
-        u_raw = df_clean[unit_col]
+        u_raw = df_clean[unit_col].astype("string").copy()
         u = _norm_unit(u_raw)
 
-        # --- temperature -> K (offset conversions) ---
-        # C/degC/celsius -> K
+        # temperature -> K
         mask_c = u.isin(["degc", "c", "celsius"])
         if mask_c.any():
             v.loc[mask_c] = v.loc[mask_c] + 273.15
             u_raw.loc[mask_c] = "K"
+            u.loc[mask_c] = "k"
 
-        # F/degF/fahrenheit -> K
         mask_f = u.isin(["degf", "fahrenheit"])
         if mask_f.any():
             v.loc[mask_f] = (v.loc[mask_f] - 32.0) * 5.0 / 9.0 + 273.15
             u_raw.loc[mask_f] = "K"
+            u.loc[mask_f] = "k"
 
-        # K/degK/kelvin -> K
         mask_k = u.isin(["degk", "k", "kelvin"])
         if mask_k.any():
             u_raw.loc[mask_k] = "K"
+            u.loc[mask_k] = "k"
 
-        # --- percent -> fraction (0–1), unit "1" ---
+        # percent -> fraction
         mask_pct = u.isin(["%", "pct"])
         if mask_pct.any():
             v.loc[mask_pct] = v.loc[mask_pct] / 100.0
             u_raw.loc[mask_pct] = "1"
+            u.loc[mask_pct] = "1"
 
-        # --- factor-based conversions ---
-        def _apply_factor_map(target_unit: str, mapping: dict, out_unit_label: str):
-            factors = u.map(mapping)  # float where recognized, <NA> otherwise
+        def _apply_factor_map(mapping: dict, out_unit_label: str):
+            nonlocal u, u_raw, v
+            factors = u.map(mapping)
             mask = factors.notna()
             if mask.any():
                 v.loc[mask] = v.loc[mask] * factors.loc[mask].astype("float64")
                 u_raw.loc[mask] = out_unit_label
+                # CRITICAL: update normalized units so later maps don't re-apply
+                u.loc[mask] = str(out_unit_label).lower()
 
-        _apply_factor_map("m", FACTOR_MAPS["m"], "m")
-        _apply_factor_map("kg", FACTOR_MAPS["kg"], "kg")
-        _apply_factor_map("s", FACTOR_MAPS["s"], "s")
-        _apply_factor_map("pa", FACTOR_MAPS["pa"], "Pa")
-        _apply_factor_map("n", FACTOR_MAPS["n"], "N")
-        _apply_factor_map("j", FACTOR_MAPS["j"], "J")
-        _apply_factor_map("v", FACTOR_MAPS["v"], "V")
-        _apply_factor_map("hz", FACTOR_MAPS["hz"], "Hz")
-        _apply_factor_map("a", FACTOR_MAPS["a"], "A")
-        _apply_factor_map("ohm", FACTOR_MAPS["ohm"], "ohm")
-        _apply_factor_map("f", FACTOR_MAPS["f"], "F")
-        _apply_factor_map("m_wl", FACTOR_MAPS["m_wl"], "m")
+        _apply_factor_map(FACTOR_MAPS["m"], "m")
+        _apply_factor_map(FACTOR_MAPS["kg"], "kg")
+        _apply_factor_map(FACTOR_MAPS["s"], "s")
+        _apply_factor_map(FACTOR_MAPS["pa"], "Pa")
+        _apply_factor_map(FACTOR_MAPS["n"], "N")
+        _apply_factor_map(FACTOR_MAPS["j"], "J")
+        _apply_factor_map(FACTOR_MAPS["v"], "V")
+        _apply_factor_map(FACTOR_MAPS["hz"], "Hz")
+        _apply_factor_map(FACTOR_MAPS["a"], "A")
+        _apply_factor_map(FACTOR_MAPS["ohm"], "ohm")
+        _apply_factor_map(FACTOR_MAPS["f"], "F")
+        _apply_factor_map(FACTOR_MAPS["m_wl"], "m")
 
-        # write back
         df_clean[col] = v
         df_clean[unit_col] = u_raw
 

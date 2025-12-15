@@ -407,7 +407,7 @@ def load_csv_loose(csv_path: str) -> pd.DataFrame:
 def main():
 
     # Action imports
-    from csv_actions_patched import (
+    from csv_actions import (
         remove_rows_and_columns,
         strip_whitespace,
         normalize_missing_values,
