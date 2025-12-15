@@ -1,0 +1,46 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{amsmath, amssymb}
+\graphicspath{{./}{Dovydas_Ziura/}{Dovydas_Ziura/dataset/hand_data/}{dataset/hand_data/}}
+
+\begin{document}
+\section*{Prediction Report}
+This report lists images, model predictions, and ground-truth LaTeX.
+
+\setlength{\tabcolsep}{12pt}
+\renewcommand{\arraystretch}{1.4}
+\begin{longtable}{p{0.30\linewidth} p{0.33\linewidth} p{0.33\linewidth}}
+\toprule
+Image & Prediction & Ground Truth \\
+\midrule
+\endhead
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_1.jpg} & $ \sqrt{\theta}=\frac{d\theta}{d\theta} $ & $ \frac{x}{y} $ \\
+\addlinespace
+\midrule
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_2.jpg} & $ (\begin{matrix}5\ 2\end{matrix}) $ & $ V(\tilde{\beta}) $ \\
+\addlinespace
+\midrule
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_3.jpg} & $ G(\theta,\theta,\theta) $ & $ GL(V)\times S_{n} $ \\
+\addlinespace
+\midrule
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_4.jpg} & $ [\begin{matrix}A\&B\ C\&D\end{matrix}] $ & $ \begin{bmatrix} 0 \& 1 \& 0\\ 0 \& 0 \& 1 \\ 0 \& 0 \& 0 \end{bmatrix} $ \\
+\addlinespace
+\midrule
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_5.jpg} & $ (\begin{matrix}2\ 6\end{matrix}) $ & $ (\begin{matrix}4\\ 2\end{matrix}) $ \\
+\addlinespace
+\midrule
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_6.jpg} & $ X^{\prime\prime}=1 $ & $ X_{0}=x $ \\
+\addlinespace
+\midrule
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_7.jpg} & $ \tilde{\nu} $ & $ \tilde{L} $ \\
+\addlinespace
+\midrule
+\includegraphics[width=\linewidth]{../dataset/hand_data/prediction_test_8.jpg} & $ A_{1}=\{0,3\}\notin\{1,2,3\} $ & $ A^{\prime}[\vec{v}]_{B^{\prime}}=[T(\vec{v})]_{B^{\prime}} $ \\
+\addlinespace
+\midrule
+\bottomrule
+\end{longtable}
+\end{document}

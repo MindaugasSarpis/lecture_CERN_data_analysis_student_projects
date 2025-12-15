@@ -29,15 +29,6 @@ Python packages (typical):
 - matplotlib
 
 ## Project Structure
-- `scripts/train.py` — training entrypoint (CLI flags for batch size, data limit, epochs)
-- `scripts/predict.py` — inference entrypoint (loads `best_model.h5` or `model_gpu.h5`)
-- `scripts/dataset.py` — dataset loader and streaming `tf.data` builders
-- `scripts/model.py` — model architecture
-- `scripts/inference_model.py` — step-wise encoder/decoder for inference
-- `scripts/post_proc_script.py` — optional post-processing
-- `scripts/tokenizer.py` — character tokenizer utilities
-- `best_model.h5`, `model_gpu.h5`, `tokenizer.pkl` — saved artifacts
-- `reference.bib` — bibliographic references for datasets/tools used
 
 ## Setup
 1. Create and activate your conda env, install packages:
@@ -58,15 +49,8 @@ conda activate tf2-gpu
 cd "c:\Users\dovyd\OneDrive\Dokumentai\Univeras\CERN data analysis\final_project\scripts"
 python .\train.py --batch-size 6 --data-limit 40000 --epochs 20
 ```
-- `--batch-size`: small (6–8) to fit VRAM
-- `--data-limit`: number of samples to load (streaming avoids RAM spikes)
-- `--epochs`: training epochs
-- Optional: `--scheduled-sampling --ss-prob 0.3`
 
 Outputs:
-- Saves `best_model.h5` (best val_loss) and `model_gpu.h5` (final state)
-- Saves `tokenizer.pkl`
-- Saves `training_curves.png` with loss/accuracy plots
 
 ## Prediction
 Run inference on validation examples or your own image:
@@ -75,9 +59,6 @@ conda activate tf2-gpu
 cd "c:\Users\dovyd\OneDrive\Dokumentai\Univeras\CERN data analysis\final_project\scripts"
 python .\predict.py --image ..\dataset\math_pngs\formula_098.png --beam 5 --output decoded.txt
 ```
-- Uses `best_model.h5` by default; override with `--model model_gpu.h5`
-- Prints predicted LaTeX; beam search with repeat/EOS penalties is enabled
-- Optional flags:
 	- `--image <path>`: input image path
 	- `--beam <N>`: beam size (1=greedy)
 	- `--model <path>`: explicit model file
@@ -112,9 +93,6 @@ python .\evaluate.py --csv ..\output\predictions.csv
 Outputs exact-match accuracy and average Levenshtein distance, plus the top hardest examples.
 
 ## Tips for Large Datasets
-- Streaming dataset is enabled to keep RAM stable even at 100k–200k.
-- Keep `IMG_SIZE` modest (e.g., `(72,144)`); increase gradually if VRAM allows.
-- Lower batch size first if you raise resolution.
 
 ## Demo
 Quick demo assuming images named `1.jpg` to `7.jpg` exist under `dataset/hand_data`:
@@ -126,23 +104,36 @@ python .\predict.py --dir ..\dataset\hand_data --range-start 1 --range-end 7 --b
 Open the CSV in your editor and add the real LaTeX in the `ground_truth` column for quick evaluation.
 
 ## Troubleshooting
-- Black screen / DWM reset: Windows GPU driver TDR. Use small batch size, moderate image size, update NVIDIA driver, close overlays. Relaunch training after the driver recovers.
-- `nvidia-smi` fails: Install/update NVIDIA driver and reboot. Ensure the discrete GPU is active.
-- `Dst tensor is not initialized`: We create large tensors on CPU or stream data to avoid GPU constant allocation issues.
-- Slow validation: Validation runs over the full val set each epoch. Reduce val size, set `validation_steps`, or `validation_freq` in `train.py`.
-- h5py/HDF5 mismatch warning: Generally safe; update h5py if needed.
 
 ## Common Commands
-- Kill lingering Python processes before relaunching:
 ```powershell
 Get-Process | Where-Object {$_.ProcessName -match "^python(\.exe)?$|^py(\.exe)?$"} | Stop-Process -Force
 ```
-- Open training curves:
 ```powershell
 Start-Process "c:\Users\dovyd\OneDrive\Dokumentai\Univeras\CERN data analysis\final_project\scripts\training_curves.png"
 ```
 
 ## Notes
-- Cite sources: include `reference.bib` in your report to acknowledge dataset and libraries.
-- This code is tuned for a small GPU; prefer minor architectural changes (attention, depthwise-separable convs) over large resolution jumps.
-- Scheduled sampling can help reduce exposure bias; ramp or tune `--ss-prob` if needed.
+
+## LaTeX Report from Predictions
+
+Generate a LaTeX report summarizing predictions vs ground truth and inline images.
+
+Steps:
+
+1. Ensure `output/predictions.csv` exists (run the prediction script first).
+2. Run the generator:
+
+```powershell
+python Dovydas_Ziura\scripts\generate_latex_from_predictions.py
+```
+
+This writes `Dovydas_Ziura/output/predictions_report.tex`.
+
+Compile to PDF (requires a LaTeX distribution like TeX Live or MiKTeX):
+
+```powershell
+pdflatex -interaction=nonstopmode -halt-on-error Dovydas_Ziura\output\predictions_report.tex
+```
+
+If `pdflatex` is not on PATH, open the `.tex` file in your LaTeX editor and compile there.

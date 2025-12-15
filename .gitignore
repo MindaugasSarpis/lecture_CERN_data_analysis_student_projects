@@ -1,0 +1,56 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# LaTeX build
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Data / Models (large binaries)
+*.h5
+*.hdf5
+*.pkl
+*.ckpt
+*.onnx
+*.tflite
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Images generated outputs (keep source dataset, ignore transient outputs)
+Dovydas_Ziura/output/*.png
+Dovydas_Ziura/output/*.jpg
+Dovydas_Ziura/output/*.jpeg
+Dovydas_Ziura/output/*.svg
+Dovydas_Ziura/output/*.bmp
+
+# CSVs or text outputs you don't want tracked (optional)
+# Dovydas_Ziura/output/*.csv
+# Dovydas_Ziura/output/*.txt
+
+# node / web (if present)
+node_modules/
+dist/
+build/

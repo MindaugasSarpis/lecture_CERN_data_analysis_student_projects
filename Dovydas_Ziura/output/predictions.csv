@@ -1,9 +1,9 @@
 filename,prediction,ground_truth
-..\dataset\hand_data\prediction_test_1.jpg,\sqrt{\theta}=\frac{d\theta}{d\theta},
-..\dataset\hand_data\prediction_test_2.jpg,(\begin{matrix}5\ 2\end{matrix}),
-..\dataset\hand_data\prediction_test_3.jpg,"G(\theta,\theta,\theta)",
-..\dataset\hand_data\prediction_test_4.jpg,[\begin{matrix}A&B\ C&D\end{matrix}],
-..\dataset\hand_data\prediction_test_5.jpg,(\begin{matrix}2\ 6\end{matrix}),
-..\dataset\hand_data\prediction_test_6.jpg,X^{\prime\prime}=1,
-..\dataset\hand_data\prediction_test_7.jpg,\tilde{\nu},
-..\dataset\hand_data\prediction_test_8.jpg,"A_{1}=\{0,3\}\notin\{1,2,3\}",
+..\dataset\hand_data\prediction_test_1.jpg,\sqrt{\theta}=\frac{d\theta}{d\theta}, \frac{x}{y},
+..\dataset\hand_data\prediction_test_2.jpg,(\begin{matrix}5\ 2\end{matrix}), V(\tilde{\beta}),
+..\dataset\hand_data\prediction_test_3.jpg,"G(\theta,\theta,\theta)", GL(V)\times S_{n},
+..\dataset\hand_data\prediction_test_4.jpg,[\begin{matrix}A&B\ C&D\end{matrix}],\begin{bmatrix} 0 & 1 & 0\\ 0 & 0 & 1 \\ 0 & 0 & 0 \end{bmatrix}
+..\dataset\hand_data\prediction_test_5.jpg,(\begin{matrix}2\ 6\end{matrix}), (\begin{matrix}4\\ 2\end{matrix}),
+..\dataset\hand_data\prediction_test_6.jpg,X^{\prime\prime}=1, X_{0}=x,
+..\dataset\hand_data\prediction_test_7.jpg,\tilde{\nu},\tilde{L},
+..\dataset\hand_data\prediction_test_8.jpg,"A_{1}=\{0,3\}\notin\{1,2,3\}", A^{\prime}[\vec{v}]_{B^{\prime}}=[T(\vec{v})]_{B^{\prime}}
