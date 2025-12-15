@@ -29,6 +29,7 @@ project_root/
 │ └─ roc_plot.png
 │
 ├─ environment.yml # Conda environment
+├─ report.pdf
 └─ README.md 
 ```
 
