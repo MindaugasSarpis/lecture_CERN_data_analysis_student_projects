@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Finance Report {{ month }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    h1,h2 { margin: 8px 0; }
+    .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .tile { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; }
+    .small { color: #666; font-size: 12px; }
+    img { max-width: 100%; height: auto; }
+    .section { margin-top: 22px; }
+    .right { text-align: right; }
+  </style>
+</head>
+<body>
+
+<h1>Finance — {{ month }}</h1>
+<div class="small">Generated at {{ generated_at }}</div>
+
+<div class="tiles">
+  <div class="tile"><strong>Total Income</strong><div>{{ kpis.total_income | round(2) }} EUR</div></div>
+  <div class="tile"><strong>Total Expenses</strong><div>{{ kpis.total_expenses | round(2) }} EUR</div></div>
+  <div class="tile"><strong>Net</strong><div>{{ (kpis.total_income + kpis.total_expenses) | round(2) }} EUR</div></div>
+  <div class="tile"><strong>Invested</strong><div>{{ kpis.total_invested | round(2) }} EUR</div></div>
+</div>
+
+<div class="tiles" style="margin-top:15px;">
+  <div class="tile"><strong>Avg Daily Spend</strong><div>{{ kpis.avg_daily_spend | round(2) }} EUR</div></div>
+</div>
+
+
+<!-- EXPENSE PIE -->
+<div class="section">
+  <h2>Expenses by category</h2>
+  <img src="{{ charts.expenses }}" alt="Expenses Pie">
+  <table>
+    <thead><tr><th>Category</th><th class="right">EUR</th><th class="right">Share %</th><th class="right">Tx count</th></tr></thead>
+    <tbody>
+      {% for r in cat_summary %}
+      <tr>
+        <td>{{ r.category }}</td>
+        <td class="right">{{ r.eur | round(2) }}</td>
+        <td class="right">{{ r.pct | round(1) }}</td>
+        <td class="right">{{ r.tx_count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<!-- INCOME PIE -->
+<div class="section">
+  <h2>Income breakdown</h2>
+  <img src="{{ charts.income }}" alt="Income Pie">
+  <table>
+    <thead><tr><th>Source</th><th class="right">EUR</th><th class="right">Share %</th></tr></thead>
+    <tbody>
+      {% for r in inc_summary %}
+      <tr>
+        <td>{{ r.source }}</td>
+        <td class="right">{{ r.eur | round(2) }}</td>
+        <td class="right">{{ r.pct | round(1) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<!-- INVESTMENT PIE -->
+<div class="section">
+  <h2>Investments</h2>
+  <img src="{{ charts.investments }}" alt="Investment Pie">
+</div>
+
+
+<!-- DAILY SPENDING -->
+<div class="section">
+  <h2>Daily Spending (excluding investments)</h2>
+  <img src="{{ charts.daily }}" alt="Daily Spending Chart">
+</div>
+
+
+<div class="section">
+  <h2>Top merchants (expenses)</h2>
+  <table>
+    <thead><tr><th>Merchant</th><th class="right">EUR</th><th class="right">Count</th></tr></thead>
+    <tbody>
+      {% for row in top_merchants %}
+      <tr><td>{{ row.merchant }}</td><td class="right">{{ row.sum | round(2) }}</td><td class="right">{{ row.cnt }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="section">
+  <h2>Miscellaneous details</h2>
+  <table>
+    <thead><tr><th>Date</th><th>Merchant</th><th>Description</th><th class="right">EUR</th></tr></thead>
+    <tbody>
+      {% if misc_rows|length == 0 %}
+      <tr><td colspan="4">No items in Miscellaneous</td></tr>
+      {% else %}
+      {% for r in misc_rows %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td>{{ r.merchant }}</td>
+        <td>{{ r.description }}</td>
+        <td class="right">{{ r.eur | round(2) }}</td>
+      </tr>
+      {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
