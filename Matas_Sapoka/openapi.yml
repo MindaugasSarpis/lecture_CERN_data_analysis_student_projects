@@ -1,0 +1,388 @@
+openapi: 3.0.3
+info:
+  title: Pose Analysis API
+  description: |
+    API for analyzing video poses against a reference video using MediaPipe pose detection.
+    Compares uploaded videos frame-by-frame with a reference video and provides detailed
+    accuracy metrics for specific body landmarks.
+  version: 1.0.0
+  contact:
+    name: API Support
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /:
+    get:
+      summary: Root endpoint
+      description: Returns API information and available endpoints
+      operationId: getRoot
+      tags:
+        - General
+      responses:
+        '200':
+          description: API information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RootResponse'
+              example:
+                message: "Pose Analysis API"
+                version: "1.0.0"
+                endpoints:
+                  "/analyze": "POST - Upload video for pose analysis"
+                  "/health": "GET - Health check"
+
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the API and reference video information
+      operationId: healthCheck
+      tags:
+        - General
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                status: "healthy"
+                reference_frames: 150
+
+  /analyze:
+    post:
+      summary: Analyze video pose
+      description: |
+        Upload a video file to analyze pose accuracy against the reference video.
+        The API processes the video frame-by-frame, compares pose landmarks, and returns
+        detailed statistics including overall score, per-landmark accuracy, and download
+        links for the analyzed video and chart.
+      operationId: analyzeVideo
+      tags:
+        - Analysis
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Video file to analyze (.mp4, .avi, or .mov)
+            encoding:
+              file:
+                contentType: video/mp4, video/avi, video/quicktime
+      responses:
+        '200':
+          description: Analysis completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResponse'
+              example:
+                overall_score: 85.5
+                frames_analyzed: 150
+                reference_frames: 150
+                per_landmark_accuracy:
+                  Nose:
+                    correct_frames: 145
+                    total_frames: 150
+                    accuracy_percentage: 96.67
+                  L_Shoulder:
+                    correct_frames: 140
+                    total_frames: 150
+                    accuracy_percentage: 93.33
+                  R_Shoulder:
+                    correct_frames: 142
+                    total_frames: 150
+                    accuracy_percentage: 94.67
+                analyzed_video: "/download/video/analyzed_example.mp4"
+                stream_video: "/stream/video/analyzed_example.mp4"
+                chart: "/download/chart/chart_example.png"
+        '400':
+          description: Invalid file type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: "Only video files (.mp4, .avi, .mov) are supported"
+        '500':
+          description: Error processing video
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: "Error processing video: <error message>"
+
+  /download/video/{filename}:
+    get:
+      summary: Download analyzed video
+      description: Downloads the analyzed video file with pose landmarks overlaid
+      operationId: downloadVideo
+      tags:
+        - Downloads
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          description: Name of the video file to download
+          schema:
+            type: string
+          example: analyzed_example.mp4
+      responses:
+        '200':
+          description: Video file
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Video file not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: "Video not found"
+
+  /download/chart/{filename}:
+    get:
+      summary: Download analysis chart
+      description: Downloads the pose accuracy analysis chart as a PNG image
+      operationId: downloadChart
+      tags:
+        - Downloads
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          description: Name of the chart file to download
+          schema:
+            type: string
+          example: chart_example.png
+      responses:
+        '200':
+          description: Chart image file
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Chart file not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: "Chart not found"
+
+  /stream/video/{filename}:
+    get:
+      summary: Stream analyzed video
+      description: |
+        Streams the analyzed video file with HTTP range request support, enabling
+        video players and browsers to seek through the video. Supports partial content
+        requests for efficient streaming and seeking.
+      operationId: streamVideo
+      tags:
+        - Streaming
+      parameters:
+        - name: filename
+          in: path
+          required: true
+          description: Name of the video file to stream
+          schema:
+            type: string
+          example: analyzed_example.mp4
+        - name: Range
+          in: header
+          required: false
+          description: HTTP Range header for partial content requests (e.g., "bytes=0-1023")
+          schema:
+            type: string
+          example: bytes=0-1023
+      responses:
+        '200':
+          description: Full video file stream
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Accept-Ranges:
+              description: Indicates that range requests are supported
+              schema:
+                type: string
+                example: bytes
+            Content-Length:
+              description: Size of the video file in bytes
+              schema:
+                type: integer
+                example: 5242880
+        '206':
+          description: Partial content (range request)
+          content:
+            video/mp4:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Range:
+              description: Range of bytes being returned
+              schema:
+                type: string
+                example: bytes 0-1023/5242880
+            Accept-Ranges:
+              description: Indicates that range requests are supported
+              schema:
+                type: string
+                example: bytes
+            Content-Length:
+              description: Size of the requested range in bytes
+              schema:
+                type: integer
+                example: 1024
+        '404':
+          description: Video file not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: "Video not found"
+        '416':
+          description: Range not satisfiable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                detail: "Range not satisfiable"
+
+components:
+  schemas:
+    RootResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Pose Analysis API"
+        version:
+          type: string
+          example: "1.0.0"
+        endpoints:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            "/analyze": "POST - Upload video for pose analysis"
+            "/health": "GET - Health check"
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "healthy"
+        reference_frames:
+          type: integer
+          description: Number of frames in the reference video
+          example: 150
+
+    AnalysisResponse:
+      type: object
+      properties:
+        overall_score:
+          type: number
+          format: float
+          description: Overall pose accuracy score as a percentage
+          example: 85.5
+        frames_analyzed:
+          type: integer
+          description: Number of frames analyzed in the uploaded video
+          example: 150
+        reference_frames:
+          type: integer
+          description: Number of frames in the reference video
+          example: 150
+        per_landmark_accuracy:
+          type: object
+          description: Accuracy statistics for each tracked body landmark
+          additionalProperties:
+            $ref: '#/components/schemas/LandmarkAccuracy'
+          example:
+            Nose:
+              correct_frames: 145
+              total_frames: 150
+              accuracy_percentage: 96.67
+            L_Shoulder:
+              correct_frames: 140
+              total_frames: 150
+              accuracy_percentage: 93.33
+        analyzed_video:
+          type: string
+          format: uri
+          description: URL path to download the analyzed video
+          example: "/download/video/analyzed_example.mp4"
+        stream_video:
+          type: string
+          format: uri
+          description: URL path to stream the analyzed video (supports HTTP range requests)
+          example: "/stream/video/analyzed_example.mp4"
+        chart:
+          type: string
+          format: uri
+          description: URL path to download the analysis chart
+          example: "/download/chart/chart_example.png"
+
+    LandmarkAccuracy:
+      type: object
+      description: Accuracy statistics for a single body landmark
+      properties:
+        correct_frames:
+          type: integer
+          description: Number of frames where this landmark matched the reference
+          example: 145
+        total_frames:
+          type: integer
+          description: Total number of reference frames
+          example: 150
+        accuracy_percentage:
+          type: number
+          format: float
+          description: Accuracy percentage for this landmark
+          example: 96.67
+
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: Error message
+          example: "Only video files (.mp4, .avi, .mov) are supported"
+
+tags:
+  - name: General
+    description: General API endpoints
+  - name: Analysis
+    description: Video pose analysis endpoints
+  - name: Downloads
+    description: File download endpoints
+  - name: Streaming
+    description: Video streaming endpoints with HTTP range request support
+
