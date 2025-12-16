@@ -1,0 +1,6 @@
+﻿# Example only. Copy to config.yaml locally and customize.
+categories:
+  groceries: ["IKI", "RIMI", "LIDL"]
+  transport: ["Bolt", "LTG"]
+  investment: ["Trading212", "Vanguard"]
+rules: []
