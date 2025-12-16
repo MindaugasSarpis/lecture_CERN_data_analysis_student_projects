@@ -1,0 +1,117 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">FIghtingApp</string>
+
+    <!-- Navigation Screens -->
+    <string name="nav_home">Home</string>
+    <string name="nav_record">Record</string>
+    <string name="nav_history">History</string>
+    <string name="nav_learn">Learn</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Home Screen -->
+    <string name="home_title">Network Request Examples</string>
+    <string name="home_btn_get_single">GET Single</string>
+    <string name="home_btn_get_list">GET List</string>
+    <string name="home_btn_post_create">POST Create</string>
+    <string name="home_single_item_title">Single Item (GET)</string>
+    <string name="home_created_item_title">Created Item (POST)</string>
+    <string name="home_items_list_title">Items List (GET)</string>
+    <string name="home_item_id">ID: %s</string>
+    <string name="home_item_title">Title: %s</string>
+    <string name="home_item_description">Description: %s</string>
+    <string name="home_item_id_short">#%s</string>
+    <string name="home_dialog_title">Create New Item (POST)</string>
+    <string name="home_dialog_label_title">Title</string>
+    <string name="home_dialog_label_description">Description</string>
+    <string name="home_dialog_btn_create">Create</string>
+    <string name="home_dialog_btn_cancel">Cancel</string>
+
+    <!-- Record Screen -->
+    <string name="record_permission_title">Camera and Microphone Access Required</string>
+    <string name="record_permission_message">To record fighting videos, we need access to your camera and microphone.</string>
+    <string name="record_permission_grant">Grant Permissions</string>
+    <string name="record_duration_format">%02d:%02d</string>
+    <string name="record_stop_recording">Stop Recording</string>
+    <string name="record_start_recording">Start Recording</string>
+    <string name="record_success_title">Video Recorded Successfully!</string>
+    <string name="record_duration_label">Duration: %s</string>
+    <string name="record_uploaded_successfully">Uploaded successfully!</string>
+    <string name="record_btn_upload">Upload Video</string>
+    <string name="record_btn_uploading">Uploading…</string>
+    <string name="record_btn_uploaded">Uploaded Successfully</string>
+    <string name="record_btn_record_another">Record Another Video</string>
+    <string name="record_btn_dismiss">Dismiss</string>
+    <string name="record_content_desc_video_recorded">Video Recorded</string>
+    <string name="record_content_desc_no_internet">No internet</string>
+
+    <!-- History Screen -->
+    <string name="history_screen_title">Video History</string>
+    <string name="history_subtitle">%d videos saved</string>
+    <string name="history_empty_title">No Videos Yet</string>
+    <string name="history_empty_message">Record your first fighting video to see it here</string>
+    <string name="history_play_video">Play video</string>
+    <string name="history_delete_video">Delete video</string>
+    <string name="history_close_video">Close video</string>
+    <string name="history_delete_title">Delete Video?</string>
+    <string name="history_delete_message">This will permanently delete the video from your device.</string>
+    <string name="history_delete_confirm">Delete</string>
+    <string name="history_delete_cancel">Cancel</string>
+    <string name="history_duration_label">Duration</string>
+    <string name="history_date_label">Recorded</string>
+    <string name="history_rename_video">Rename video</string>
+    <string name="history_rename_title">Rename Video</string>
+    <string name="history_rename_hint">Enter new name</string>
+    <string name="history_rename_confirm">Rename</string>
+    <string name="history_rename_cancel">Cancel</string>
+
+    <!-- Record Screen -->
+    <string name="record_rename_video">Rename video</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_screen_title">Profile Screen</string>
+    <string name="profile_picture_desc">Profile picture of %s</string>
+    <string name="profile_belt_label">Belt/Rank</string>
+    <string name="profile_streak_label">Training Streak</string>
+    <string name="profile_move_ratings_label">Move Ratings</string>
+    <string name="profile_leg_moves_label">Leg Moves</string>
+    <string name="profile_torso_moves_label">Torso Moves</string>
+    <string name="profile_arm_moves_label">Arm Moves</string>
+    <string name="streak_count">%d days</string>
+    <string name="loading">Loading…</string>
+
+    <!-- Learn Screen -->
+    <string name="learn_title">Learning Suggestions</string>
+    <string name="learn_refresh">Refresh</string>
+    <string name="learn_empty_state">No moves available at the moment</string>
+    <string name="learn_move_detail_title">Move Details</string>
+    <string name="learn_toggle_mark">Toggle bookmark</string>
+    <string name="learn_description_label">Description</string>
+    <string name="learn_difficulty_label">Difficulty</string>
+    <string name="learn_video_label">Training Video</string>
+    <string name="learn_start_learning">Start Learning</string>
+    <string name="learn_started">Learning Started</string>
+    <string name="learn_started_message">You\'ve started learning this move. Good luck with your training!</string>
+
+    <!-- Network Status -->
+    <string name="network_status_no_internet">You are not connected to the internet</string>
+
+    <!-- Common -->
+    <string name="common_dismiss">Dismiss</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_back">Back</string>
+    <string name="common_error">Error</string>
+    <string name="common_loading">Loading…</string>
+
+    <!-- Error Messages -->
+    <string name="error_no_video">No video to upload</string>
+    <string name="error_no_network">No internet connection. Please check your network.</string>
+    <string name="error_video_not_found">Video file not found or could not be accessed</string>
+    <string name="error_upload_failed">Upload failed: %s</string>
+    <string name="error_network_error">Network error: %s</string>
+    <string name="error_connection_failed">Network connection failed. Please check your internet connection.</string>
+    <string name="error_recording">Recording error: %s</string>
+
+    <!-- Success Messages -->
+    <string name="success_video_uploaded">Video uploaded successfully: %s</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext (HTTP) traffic to your backend domain -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">aionly-backend-env.eba-zjjkzzic.eu-north-1.elasticbeanstalk.com</domain>
+        <domain includeSubdomains="true">10.112.37.234</domain>
+        <domain includeSubdomains="true">https://web-production-a59ad.up.railway.app</domain>
+    </domain-config>
+</network-security-config>
+
