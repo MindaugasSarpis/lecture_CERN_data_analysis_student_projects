@@ -1,0 +1,4 @@
+pygame>=2.5
+pandas>=1.5
+numpy>=1.24
+scikit-learn>=1.3
