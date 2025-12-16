@@ -1,0 +1,105 @@
+\documentclass[a4paper,11pt,twocolumn]{article}
+
+\usepackage[top=1.2cm, bottom=1.8cm, left=1.6cm, right=1.6cm]{geometry}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\usepackage[font={10pt},skip=12pt]{caption}
+\usepackage{wrapfig}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[skip=6pt, indent=0.5in]{parskip}
+%\usepackage{newtxtext,newtxmath}
+\usepackage[most]{tcolorbox}
+\usepackage{titling}
+\usepackage{lipsum}
+
+
+\titleformat{\section}[block]{\normalfont\Large\bfseries}{}{0pt}{}
+\titleformat{\subsection}[block]{\normalfont\large\bfseries}{}{0pt}{}
+\titleformat{\subsubsection}[block]{\normalfont\normalsize\bfseries}{}{0pt}{}
+
+
+\renewcommand{\today}{\the\year-\ifnum\month<10 0\fi\the\month-\ifnum\day<10 0\fi\the\day}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=red,
+    citecolor=green,
+    filecolor=magenta,
+    urlcolor=black
+}
+
+
+\renewcommand{\figurename}{\textbf{Fig.}}
+\DeclareCaptionLabelFormat{boldfig}{\textbf{#1 #2}}
+\captionsetup[figure]{labelformat=boldfig}
+
+%--------Header------------------------------
+\pagestyle{fancy}
+\fancyhf{} 
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[R]{}
+\fancyhead[L]{Template}
+%--------------------------------------------
+
+
+\fancypagestyle{plain}{
+    \fancyhf{} 
+    \renewcommand{\footrulewidth}{0.4pt}
+    \fancyfoot[R]{}
+    \fancyhead[L]{}
+}
+
+%--------Title-------------------------------
+\setlength{\droptitle}{-2em}
+\title{\textbf{Analysis of the Dimuon Mass Spectrum in \\ CMS Open Data}}
+\author{\textbf{Liutauras Pocius}\endgraf\\
+\textbf{Fizika, Fizikos fakultetas, Vilniaus Universitetas}}
+\date{\today}
+%--------------------------------------------
+
+
+\begin{document}
+\pagenumbering{gobble}
+\maketitle
+\paragraph{Data and method.}
+I analysed a public CMS dimuon dataset from the 2011 run at $\sqrt{s}=7\;\mathrm{TeV}$ (DoubleMu primary dataset, about $10^5$ events) made available via the CERN Open Data Portal.\footnote{CMS Open Data, dimuon sample \texttt{Dimuon\_DoubleMu.csv}, record~545, CERN Open Data Portal, \url{http://opendata.cern.ch/record/545}.} Each event contains two reconstructed muon candidates with four-momentum components, transverse momentum $p_T$, pseudorapidity $\eta$, azimuthal angle $\phi$ and charge $Q$, as well as the dimuon invariant mass $M$ in GeV.\par
+Using Python, \texttt{numpy} and \texttt{pandas} I recomputed the invariant
+mass from the four-vectors according to
+\begin{align*}
+    m_{\mu\mu}^2 = (E_1+E_2)^2 - &(p_{x1}+p_{x2})^2 -\\
+    -&(p_{y1}+p_{y2})^2 - (p_{z1}+p_{z2})^2 .
+\end{align*}
+A consistency check shows that the difference $M_{\text{CSV}}-M_{\text{reco}}$ has mean $\langle\Delta M\rangle = 2.6\cdot10^{-5}\;\mathrm{GeV}$ and RMS $\sigma_{\Delta M} = 4\cdot10^{-3}\;\mathrm{GeV}$, i.e.\ the reconstructed masses match the values provided in the dataset within numerical precision. I then filled histograms of $m_{\mu\mu}$: a wide range $[0,\,125\;\mathrm{GeV}]$ displayed on a logarithmic $y$-axis, and a narrow window $[\SI{80}{GeV},\,\SI{100}{GeV}]$ around the $Z$ peak. The latter is fitted with a simple Gaussian model using \texttt{scipy.optimize.curve\_fit}.
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.98\linewidth]{/Users/liutauraspocius/Desktop/VU/V semestras/CERN duomenų analizės metodai/Projektas/figures/dimuon_mass_log.pdf}
+    \caption{Dimuon invariant mass spectrum in CMS open data. The plot shows narrow charmonium peaks ($J/\psi$ and $\psi(2S)$) at a few GeV, the $\Upsilon$ region around \SI{10}{GeV}, the broad Drell-Yan continuum and the dominant $Z\to\mu^+\mu^-$ resonance near \SI{91}{GeV}.}
+    \label{fig:mass-global}
+\end{figure}
+\paragraph{Results.}
+Figure~\ref{fig:mass-global} displays the overall dimuon spectrum. On a single logarithmic plot we observe QCD and electroweak physics across two orders of magnitude in mass: the $J/\psi$ and $\psi(2S)$ charmonia, the $\Upsilon$ bottomonium family and a clear $Z$ boson peak, all sitting on top of the Drell-Yan background. Integrating fixed mass windows I found, for example, $N_{J/\psi} = 8422$, $N_{\Upsilon} = 6359$ and $N_Z = 5174$ events in the $J/\psi$, $\Upsilon$ and $Z$ regions, respectively.
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.98\linewidth]{/Users/liutauraspocius/Desktop/VU/V semestras/CERN duomenų analizės metodai/Projektas/figures/z_peak_fit.pdf}
+    \caption{Dimuon invariant mass in the $Z$ region with a Gaussian fit. Points show data with Poisson uncertainties; the curve is the best-fit model.}
+    \label{fig:z-fit}
+\end{figure}
+Figure \ref{fig:z-fit} focuses on the $Z\to\mu^+\mu^-$ region and overlays a Gaussian fit.  The extracted mass is $\mu_Z = 90.81\;\mathrm{GeV}$ and the effective width $\sigma_Z = 2.22\;\mathrm{GeV}$, where the uncertainties are taken from the fit covariance. Within the statistical precision and simplistic line-shape model, $\mu_Z$ is compatible with the world-average $Z$ boson mass $M_Z \approx \SI{91.2}{GeV}$. The fitted $\sigma_Z$ is dominated by detector resolution and selection effects rather than the physical $Z$ width.
+\paragraph{Conclusion.}
+Using a small open dataset and a compact, modular Python analysis we can
+reproduce the characteristic resonant structure of the dimuon spectrum at the
+LHC and obtain a reasonable estimate of the $Z$ mass.  The code is organised
+into separate modules for I/O, physics logic, fitting and plotting, making it
+straightforward to extend this study to more refined selections or alternative
+models.
+\end{document}
