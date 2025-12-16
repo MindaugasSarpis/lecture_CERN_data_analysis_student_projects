@@ -20,10 +20,12 @@ Type in a movie you like, and the system finds similar ones based on how users r
 ```
 Input: "Toy Story"
 Output:
-                                    title                    genres  similarity_score
-1              Toy Story 2 (1999)  Adventure|Animation|Children...            0.8523
-2           Monsters, Inc. (2001)  Adventure|Animation|Children...            0.7891
-3  Incredibles, The (2004)        Adventure|Animation|Children...            0.7654
+                                        title                                       genres  similarity_score
+1                         Toy Story 2 (1999)  Adventure|Animation|Children|Comedy|Fantasy          0.572601
+2                       Jurassic Park (1993)             Action|Adventure|Sci-Fi|Thriller          0.565637
+3       Independence Day (a.k.a. ID4) (1996)             Action|Adventure|Sci-Fi|Thriller          0.564262
+4  Star Wars: Episode IV - A New Hope (1977)                      Action|Adventure|Sci-Fi          0.557388
+5                        Forrest Gump (1994)                     Comedy|Drama|Romance|War          0.547096
 ```
 
 **2. Random Movie Pick**
@@ -139,3 +141,4 @@ Choose an option:
 This project uses the MovieLens dataset. Ensure you have these files in the same directory:
 - `movies.csv` - Contains `movieId`, `title`, and `genres` columns
 - `ratings.csv` - Contains `userId`, `movieId`, and `rating` columns
+
