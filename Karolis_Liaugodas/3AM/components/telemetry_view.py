@@ -59,33 +59,38 @@ def create_telemetry_plot(laps_data_list):
             # 3. Throttle
             fig.add_trace(go.Scatter(
                 x=tel['Distance'], y=tel['Throttle'],
-                mode='lines', showlegend=False, line=dict(color=color)
+                mode='lines', name=label, showlegend=False, line=dict(color=color),
+                legendgroup=label
             ), row=3, col=1)
 
             # 4. Brake (Boolean or Pressure if available)
             # FastF1 'Brake' is usually boolean.
             fig.add_trace(go.Scatter(
                 x=tel['Distance'], y=tel['Brake'].astype(int),
-                mode='lines', showlegend=False, fill='tozeroy', line=dict(color=color)
+                mode='lines', name=label, showlegend=False, fill='tozeroy', line=dict(color=color),
+                legendgroup=label
             ), row=4, col=1)
 
             # 5. RPM
             fig.add_trace(go.Scatter(
                 x=tel['Distance'], y=tel['RPM'],
-                mode='lines', showlegend=False, line=dict(color=color)
+                mode='lines', name=label, showlegend=False, line=dict(color=color),
+                legendgroup=label
             ), row=5, col=1)
             
             # 6. Gear
             fig.add_trace(go.Scatter(
                 x=tel['Distance'], y=tel['nGear'],
-                mode='lines', showlegend=False, line=dict(color=color)
+                mode='lines', name=label, showlegend=False, line=dict(color=color),
+                legendgroup=label
             ), row=6, col=1)
             
             # 7. DRS
             if 'DRS' in tel.columns:
                  fig.add_trace(go.Scatter(
                     x=tel['Distance'], y=tel['DRS'],
-                    mode='lines', showlegend=False, line=dict(color=color)
+                    mode='lines', name=label, showlegend=False, line=dict(color=color),
+                    legendgroup=label
                 ), row=7, col=1)
 
         except Exception as e:

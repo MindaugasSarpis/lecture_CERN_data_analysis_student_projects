@@ -323,4 +323,4 @@ def update_telemetry_view(active_tab, stored_laps):
     return fig, badges
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8045)
+    app.run(debug=True, port=8034)
