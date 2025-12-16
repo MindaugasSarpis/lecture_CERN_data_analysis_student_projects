@@ -1,0 +1,111 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{eurosym}
+
+\title{Optimization of Nutritional Value per Cost:\\Analysis of the Hesburger Menu}
+\author{Laurynas Agejevas\\
+Vilnius University, Faculty of Physics, Light Engineering}
+\date{16 December 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This project aims to determine the most cost-effective menu items at Hesburger, a popular fast-food chain in the Baltics, by analyzing the relationship between price and nutritional content. The primary objective is to identify which menu items offer the best value in terms of calories per euro and protein per euro, providing data-driven insights for budget-conscious consumers seeking maximum nutritional value.
+
+The analysis combines multiple data science techniques including web scraping, optical character recognition (OCR), data processing, and visualization to create a comprehensive dataset linking menu prices with nutritional information.
+
+\section{Methodology}
+
+The project employs a multi-stage data collection and analysis pipeline:
+
+\subsection{Data Collection}
+
+\begin{enumerate}
+    \item \textbf{PDF Download and OCR Processing}: The latest menu PDF was downloaded from Hesburger's website and processed using EasyOCR to extract text, including item names and prices.
+    
+    \item \textbf{Menu Parsing}: A custom parser was developed to extract structured data (item names, prices, and meal types: base items, small combos, and large combos) from the OCR text output.
+    
+    \item \textbf{Web Scraping}: Nutritional information was scraped from Hesburger's official nutritional information webpage using BeautifulSoup, extracting data on energy content (kJ and kcal), fats, carbohydrates, sugars, proteins, and salt.
+    
+    \item \textbf{Data Matching}: An intelligent matching algorithm was implemented to combine price data with nutritional information, handling variations in naming conventions and meal configurations.
+\end{enumerate}
+
+\subsection{Analysis}
+
+The combined dataset was analyzed to calculate:
+\begin{itemize}
+    \item Calories per euro (kcal/€) for each menu item
+    \item Protein per euro (g/€) for each menu item
+    \item Price per 100 kcal as an alternative metric
+\end{itemize}
+
+Visualizations were generated using Matplotlib to illustrate the relationships between price, nutritional content, and value metrics across different menu item categories.
+
+\section{Results}
+
+\subsection{Visual Analysis}
+
+Figure \ref{fig:calories} shows the relationship between menu item prices and caloric content, while Figure \ref{fig:protein} illustrates the price-to-protein relationship. Both visualizations reveal clear clustering patterns, with base items offering superior value compared to combo meals.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../output/calories_vs_price.png}
+    \caption{Calories versus price for different menu item types. Base items (blue) show the best caloric value per euro.}
+    \label{fig:calories}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../output/protein_vs_price.png}
+    \caption{Protein content versus price for different menu item types. VEKE items demonstrate exceptional protein-to-cost ratios.}
+    \label{fig:protein}
+\end{figure}
+
+\subsection{Best Caloric Value}
+
+The analysis revealed that basic burger items, particularly the VEKE Mėsainis su sūriu (VEKE Burger with Cheese), offer exceptional caloric value:
+\begin{itemize}
+    \item \textbf{Base item}: 314.29 kcal/\euro{} at \euro{}1.40
+    \item \textbf{Small combo}: 280.00 kcal/\euro{} at \euro{}2.90
+    \item \textbf{Large combo}: 256.00 kcal/\euro{} at \euro{}4.00
+\end{itemize}
+
+\subsection{Best Protein Value}
+
+For protein content, the VEKE Dvigubas mėsainis su sūriu (VEKE Double Burger with Cheese) provides the highest protein-to-cost ratio at 12.74 g/\euro{} for \euro{}2.30, delivering 29.3 g of protein.
+
+\subsection{Key Insights}
+
+\begin{enumerate}
+    \item Basic burger items consistently outperform premium items in terms of caloric and protein value per euro.
+    \item Combo meals reduce the value ratio due to added beverage and side costs, though they remain competitive for larger meal requirements.
+    \item The VEKE line (value menu) demonstrates superior cost-efficiency compared to standard menu items.
+\end{enumerate}
+
+\section{Technical Implementation}
+
+The project was implemented in Python using the following libraries:
+\begin{itemize}
+    \item \textbf{Data Processing}: pandas, numpy
+    \item \textbf{Web Scraping}: requests, BeautifulSoup4
+    \item \textbf{OCR}: EasyOCR, PyMuPDF, Pillow
+    \item \textbf{Visualization}: Matplotlib
+\end{itemize}
+
+All scripts were modularized for maintainability and reusability, with a master pipeline script (\texttt{analysis.py}) orchestrating the complete workflow.
+
+\section{Conclusion}
+
+This project successfully demonstrates the application of data science techniques to real-world consumer decision-making. The analysis provides quantitative evidence that budget-friendly menu items offer superior nutritional value per cost, challenging the perception that premium items provide better value. The methodology developed is generalizable and could be applied to other restaurant chains or food service providers.
+
+Future work could extend this analysis to include micronutrient content, dietary restrictions (vegetarian, vegan, gluten-free), and regional price variations.
+
+\end{document}
