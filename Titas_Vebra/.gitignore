@@ -1,0 +1,19 @@
+# --------------------------
+# Python cache files
+# --------------------------
+__pycache__/
+*.pyc
+*.pyo
+
+# --------------------------
+# LaTeX build garbage
+# --------------------------
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
