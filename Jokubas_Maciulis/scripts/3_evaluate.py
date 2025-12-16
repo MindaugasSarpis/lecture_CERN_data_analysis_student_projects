@@ -6,13 +6,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_curve, auc
 
+# Load CSV dataset
 df = pd.read_csv("data/processed/electron_dataset.csv")
 
-X = df.drop(columns=["target"]).to_numpy()
-y = df["target"].to_numpy()
+# Separate features and target
+X = df.drop(columns=["target"]).to_numpy() # Features: electrons + jets
+y = df["target"].to_numpy()                # Labels: 1 = signal, 0 = background
 
+# Standardize features for stable NN training
 X = StandardScaler().fit_transform(X)
 
+# Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42
 )
