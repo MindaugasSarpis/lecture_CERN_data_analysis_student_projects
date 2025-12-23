@@ -53,4 +53,4 @@ Dovydas_Ziura/output/*.bmp
 # node / web (if present)
 node_modules/
 dist/
-build/
+build/Aidas_Stankevicius/.venv/
