@@ -23,17 +23,20 @@ movie_similarity = cosine_similarity(user_movie_matrix_filled.T)
 movie_similarity_df = pd.DataFrame(movie_similarity, 
                                    index=user_movie_matrix.columns, 
                                    columns=user_movie_matrix.columns)
+
 # Get a random movie from the dataset, returns the movie title and genres
 def get_random_movie():
     random_movie = movies.sample(n=1).iloc[0]
     
-    print(f"\n🎬 Random Movie: {random_movie['title']}")
-    print(f"📁 Genres: {random_movie['genres']}")
-    print(f"🆔 Movie ID: {random_movie['movieId']}")
+    print(f"\n Random Movie: {random_movie['title']}")
+    print(f" Genres: {random_movie['genres']}")
+    print(f" Movie ID: {random_movie['movieId']}")
     
     return random_movie['title'], random_movie['genres']
+
 # Get movie recommendations based on a movie title, uses collaborative filtering approach
 def get_movie_recommendations(movie_title, num_recommendations=5):
+
     # Find the movie ID
     movie_matches = movies[movies['title'].str.contains(movie_title, case=False, na=False, regex=False)]
     
@@ -68,8 +71,10 @@ def get_movie_recommendations(movie_title, num_recommendations=5):
     df = pd.DataFrame(recommendations)
     df.index = df.index + 1
     return df
-#   Get movie recommendations for a specific user, based on what similar users liked
+
+# Get movie recommendations for a specific user, based on what similar users liked
 def get_user_recommendations(user_id, num_recommendations=5):
+
     if user_id not in user_movie_matrix.index:
         return "User ID not found!"
     
@@ -160,5 +165,4 @@ while True:
         break
     
     else:
-
         print("Invalid choice. Please enter 1, 2, or 3.")

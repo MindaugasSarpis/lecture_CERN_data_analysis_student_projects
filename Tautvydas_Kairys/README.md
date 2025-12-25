@@ -141,4 +141,3 @@ Choose an option:
 This project uses the MovieLens dataset. Ensure you have these files in the same directory:
 - `movies.csv` - Contains `movieId`, `title`, and `genres` columns
 - `ratings.csv` - Contains `userId`, `movieId`, and `rating` columns
-
